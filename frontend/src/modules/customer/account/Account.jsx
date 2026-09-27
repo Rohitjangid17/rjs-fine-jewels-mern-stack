@@ -1,10 +1,5 @@
-import { Menu, Card, Badge, Button } from "antd";
-import {
-    ShoppingOutlined,
-    HeartOutlined,
-    EnvironmentOutlined,
-    LogoutOutlined,
-} from "@ant-design/icons";
+import { Menu } from "antd";
+import { ShoppingOutlined, HeartOutlined, EnvironmentOutlined, LogoutOutlined, } from "@ant-design/icons";
 import CommonBanner from "../../../shared/components/customer/banner/CommonBanner";
 import { Link, Outlet } from "react-router-dom";
 
@@ -27,11 +22,11 @@ const Account = () => {
                                         label: <Link to="/account/dashboard">Dashboard</Link>,
                                         icon: <ShoppingOutlined />,
                                     },
-                                    {
-                                        key: "orders",
-                                        label: <Link to="/account/orders">My Orders</Link>,
-                                        icon: <ShoppingOutlined />,
-                                    },
+                                    // {
+                                    //     key: "orders",
+                                    //     label: <Link to="/account/orders">My Orders</Link>,
+                                    //     icon: <ShoppingOutlined />,
+                                    // },
                                     {
                                         key: "wishlist",
                                         label: <Link to="/account/wishlist">My Wishlist</Link>,

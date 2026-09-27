@@ -40,7 +40,7 @@ const customerRoutes = (
         <Route path="/account" element={<Account />}>
             <Route index element={<AccountDashboard />} />
             <Route path="dashboard" element={<AccountDashboard />} />
-            <Route path="orders" element={<AccountOrders />} />
+            {/* <Route path="orders" element={<AccountOrders />} /> */}
             <Route path="wishlist" element={<AccountWishlist />} />
             <Route path="address" element={<AccountAddress />} />
         </Route>
