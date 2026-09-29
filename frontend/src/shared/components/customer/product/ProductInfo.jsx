@@ -210,10 +210,10 @@ const ProductInfo = () => {
 
             size: chosenSize
                 ? {
-                      size: chosenSize.size,
-                      priceModifier:
-                          chosenSize.priceModifier || 0,
-                  }
+                    size: chosenSize.size,
+                    priceModifier:
+                        chosenSize.priceModifier || 0,
+                }
                 : undefined,
 
             color: chosenColor || undefined,
@@ -281,7 +281,7 @@ const ProductInfo = () => {
 
             message.error(
                 error?.response?.data?.message ||
-                    "Unable to add product to cart"
+                "Unable to add product to cart"
             );
         } finally {
             setIsAddingToCart(false);
@@ -289,10 +289,9 @@ const ProductInfo = () => {
     };
 
     // -----------------------------------------
-    // Buy Now
+    // Buy Now -> WhatsApp
     // -----------------------------------------
-
-    const handleBuyNow = async () => {
+    const handleBuyNow = () => {
         if (!product?._id) {
             message.error("Product not found");
             return;
@@ -302,40 +301,99 @@ const ProductInfo = () => {
             product?.sizes?.length &&
             !chosenSize
         ) {
-            message.warning(
-                "Please select a size"
-            );
+            message.warning("Please select a size");
             return;
         }
 
         try {
-            setIsAddingToCart(true);
+            const productName =
+                product?.title || "Jewellery Product";
 
-            const payload =
-                getCartPayload();
+            const sku =
+                product?.sku || "N/A";
 
-            console.log(
-                "Buy now payload:",
-                payload
+            const price = Number(
+                product?.finalPrice ||
+                product?.basePrice ||
+                0
             );
 
-            // IMPORTANT:
-            // Use CartContext here as well.
-            await addToCart(payload);
+            const totalPrice = price * quantity;
 
-            navigate("/cart");
+            const size =
+                chosenSize?.size || "Not selected";
+
+            const color =
+                chosenColor || "Not selected";
+
+            const metalType =
+                product?.metalType || "Not specified";
+
+            const gemstones =
+                product?.gemstones?.length
+                    ? product.gemstones
+                        .map((gemstone) => {
+                            if (
+                                typeof gemstone ===
+                                "string"
+                            ) {
+                                return gemstone;
+                            }
+
+                            return (
+                                gemstone?.name ||
+                                ""
+                            );
+                        })
+                        .filter(Boolean)
+                        .join(", ")
+                    : "Not specified";
+
+            const productUrl =
+                window.location.href;
+
+            const whatsappMessage = `
+Hello, I am interested in this product.
+
+Product: ${productName}
+SKU: ${sku}
+Price: ₹${price.toLocaleString("en-IN")}
+Quantity: ${quantity}
+Total: ₹${totalPrice.toLocaleString("en-IN")}
+
+Size: ${size}
+Color: ${color}
+Metal Type: ${metalType}
+Gemstones: ${gemstones}
+
+Product Link:
+${productUrl}
+
+Please share more details about this product.
+        `.trim();
+
+            const whatsappNumber =
+                "916376015899";
+
+            const whatsappUrl =
+                `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+                    whatsappMessage
+                )}`;
+
+            window.open(
+                whatsappUrl,
+                "_blank",
+                "noopener,noreferrer"
+            );
         } catch (error) {
             console.error(
-                "Buy now error:",
+                "Buy now WhatsApp error:",
                 error
             );
 
             message.error(
-                error?.response?.data?.message ||
-                    "Unable to proceed"
+                "Unable to open WhatsApp"
             );
-        } finally {
-            setIsAddingToCart(false);
         }
     };
 
@@ -474,12 +532,11 @@ const ProductInfo = () => {
                                                                 index
                                                             )
                                                         }
-                                                        className={`w-full h-full object-cover cursor-pointer border rounded-lg ${
-                                                            activeIndex ===
-                                                            index
+                                                        className={`w-full h-full object-cover cursor-pointer border rounded-lg ${activeIndex ===
+                                                                index
                                                                 ? "border-[#ff6f61]"
                                                                 : "border-gray-300"
-                                                        }`}
+                                                            }`}
                                                     />
                                                 </div>
                                             )
@@ -558,12 +615,11 @@ const ProductInfo = () => {
                                                 activeIndex ===
                                                 0
                                             }
-                                            className={`custom-swiper-button-prev !absolute !top-1/2 !left-3 -translate-y-1/2 z-10 !w-11 !h-11 !border !p-0 ${
-                                                activeIndex ===
-                                                0
+                                            className={`custom-swiper-button-prev !absolute !top-1/2 !left-3 -translate-y-1/2 z-10 !w-11 !h-11 !border !p-0 ${activeIndex ===
+                                                    0
                                                     ? "!bg-gray-100 !border-[#E5E5E5] !text-gray-400"
                                                     : "!bg-white !border-[#EBEBEE] !text-black hover:!bg-black hover:!text-white"
-                                            }`}
+                                                }`}
                                         >
                                             <FiChevronLeft
                                                 size={20}
@@ -578,15 +634,14 @@ const ProductInfo = () => {
                                             disabled={
                                                 activeIndex ===
                                                 productImages.length -
-                                                    1
+                                                1
                                             }
-                                            className={`custom-swiper-button-next !absolute !top-1/2 !right-3 -translate-y-1/2 z-10 !w-11 !h-11 !border !p-0 ${
-                                                activeIndex ===
-                                                productImages.length -
+                                            className={`custom-swiper-button-next !absolute !top-1/2 !right-3 -translate-y-1/2 z-10 !w-11 !h-11 !border !p-0 ${activeIndex ===
+                                                    productImages.length -
                                                     1
                                                     ? "!bg-gray-100 !border-[#E5E5E5] !text-gray-400"
                                                     : "!bg-white !border-[#EBEBEE] !text-black hover:!bg-black hover:!text-white"
-                                            }`}
+                                                }`}
                                         >
                                             <FiChevronRight
                                                 size={20}
@@ -634,8 +689,8 @@ const ProductInfo = () => {
                                             ₹
                                             {Number(
                                                 product?.finalPrice ||
-                                                    product?.basePrice ||
-                                                    0
+                                                product?.basePrice ||
+                                                0
                                             ).toLocaleString(
                                                 "en-IN"
                                             )}
@@ -645,35 +700,35 @@ const ProductInfo = () => {
                                         {product?.discount
                                             ?.amount >
                                             0 && (
-                                            <p className="text-[#0009] text-3xl font-medium">
+                                                <p className="text-[#0009] text-3xl font-medium">
 
-                                                <del>
-                                                    ₹
-                                                    {Number(
-                                                        product?.basePrice ||
+                                                    <del>
+                                                        ₹
+                                                        {Number(
+                                                            product?.basePrice ||
                                                             0
-                                                    ).toLocaleString(
-                                                        "en-IN"
-                                                    )}
-                                                </del>
+                                                        ).toLocaleString(
+                                                            "en-IN"
+                                                        )}
+                                                    </del>
 
-                                            </p>
-                                        )}
+                                                </p>
+                                            )}
 
                                         {product?.discount
                                             ?.amount >
                                             0 && (
-                                            <span className="bg-[#ff6f61] text-sm font-normal text-white px-2.5 py-[5px] rounded-full">
+                                                <span className="bg-[#ff6f61] text-sm font-normal text-white px-2.5 py-[5px] rounded-full">
 
-                                                {product
-                                                    ?.discount
-                                                    ?.type ===
-                                                "percent"
-                                                    ? `${product?.discount?.amount}% Off`
-                                                    : `₹${product?.discount?.amount} Off`}
+                                                    {product
+                                                        ?.discount
+                                                        ?.type ===
+                                                        "percent"
+                                                        ? `${product?.discount?.amount}% Off`
+                                                        : `₹${product?.discount?.amount} Off`}
 
-                                            </span>
-                                        )}
+                                                </span>
+                                            )}
 
                                     </div>
 
@@ -705,127 +760,122 @@ const ProductInfo = () => {
                                     {product?.colors
                                         ?.length >
                                         0 && (
-                                        <div className="flex flex-col gap-y-2">
+                                            <div className="flex flex-col gap-y-2">
 
-                                            <p className="text-black font-normal text-base">
+                                                <p className="text-black font-normal text-base">
 
-                                                Colors:
+                                                    Colors:
 
-                                                <span className="font-medium ml-1">
-                                                    {
-                                                        chosenColor
-                                                    }
-                                                </span>
+                                                    <span className="font-medium ml-1">
+                                                        {
+                                                            chosenColor
+                                                        }
+                                                    </span>
 
-                                            </p>
+                                                </p>
 
-                                            <div className="flex gap-3 flex-wrap">
+                                                <div className="flex gap-3 flex-wrap">
 
-                                                {product.colors.map(
-                                                    (
-                                                        color,
-                                                        index
-                                                    ) => (
-                                                        <div
-                                                            key={
-                                                                index
-                                                            }
-                                                            onClick={() =>
-                                                                setChosenColor(
-                                                                    color
-                                                                )
-                                                            }
-                                                            className={`w-[38px] h-[38px] flex items-center justify-center cursor-pointer rounded-full border transition-all ${
-                                                                chosenColor ===
-                                                                color
-                                                                    ? "border-[#101828]"
-                                                                    : "border-transparent"
-                                                            }`}
-                                                        >
-
+                                                    {product.colors.map(
+                                                        (
+                                                            color,
+                                                            index
+                                                        ) => (
                                                             <div
-                                                                className={`w-8 h-8 rounded-full border border-[#dcdcdc] ${
-                                                                    color ===
-                                                                    "Yellow Gold"
-                                                                        ? "bg-[#e2d2ab]"
-                                                                        : ""
-                                                                } ${
-                                                                    color ===
-                                                                    "Rose Gold"
-                                                                        ? "bg-[#dcc8ba]"
-                                                                        : ""
-                                                                } ${
-                                                                    color ===
-                                                                    "White Gold"
-                                                                        ? "bg-[#d6d6d6]"
-                                                                        : ""
-                                                                }`}
-                                                            />
+                                                                key={
+                                                                    index
+                                                                }
+                                                                onClick={() =>
+                                                                    setChosenColor(
+                                                                        color
+                                                                    )
+                                                                }
+                                                                className={`w-[38px] h-[38px] flex items-center justify-center cursor-pointer rounded-full border transition-all ${chosenColor ===
+                                                                        color
+                                                                        ? "border-[#101828]"
+                                                                        : "border-transparent"
+                                                                    }`}
+                                                            >
 
-                                                        </div>
-                                                    )
-                                                )}
+                                                                <div
+                                                                    className={`w-8 h-8 rounded-full border border-[#dcdcdc] ${color ===
+                                                                            "Yellow Gold"
+                                                                            ? "bg-[#e2d2ab]"
+                                                                            : ""
+                                                                        } ${color ===
+                                                                            "Rose Gold"
+                                                                            ? "bg-[#dcc8ba]"
+                                                                            : ""
+                                                                        } ${color ===
+                                                                            "White Gold"
+                                                                            ? "bg-[#d6d6d6]"
+                                                                            : ""
+                                                                        }`}
+                                                                />
+
+                                                            </div>
+                                                        )
+                                                    )}
+
+                                                </div>
 
                                             </div>
-
-                                        </div>
-                                    )}
+                                        )}
 
                                     {/* Sizes */}
 
                                     {product?.sizes
                                         ?.length >
                                         0 && (
-                                        <div className="flex flex-col gap-y-2">
+                                            <div className="flex flex-col gap-y-2">
 
-                                            <p className="text-black font-normal text-base">
+                                                <p className="text-black font-normal text-base">
 
-                                                Size:
+                                                    Size:
 
-                                                <span className="font-medium ml-1">
-                                                    {
-                                                        chosenSize?.size
-                                                    }
-                                                </span>
+                                                    <span className="font-medium ml-1">
+                                                        {
+                                                            chosenSize?.size
+                                                        }
+                                                    </span>
 
-                                            </p>
+                                                </p>
 
-                                            <div className="flex gap-3 flex-wrap">
+                                                <div className="flex gap-3 flex-wrap">
 
-                                                {product.sizes.map(
-                                                    (
-                                                        size,
-                                                        index
-                                                    ) => (
-                                                        <div
-                                                            key={
-                                                                size?._id ||
-                                                                size?.id ||
-                                                                index
-                                                            }
-                                                            onClick={() =>
-                                                                setChosenSize(
-                                                                    size
-                                                                )
-                                                            }
-                                                            className={`w-12 h-12 rounded-full border text-xl font-medium cursor-pointer transition-all flex items-center justify-center uppercase ${
-                                                                chosenSize?.size ===
-                                                                size?.size
-                                                                    ? "border-black"
-                                                                    : "border-gray-300"
-                                                            }`}
-                                                        >
-                                                            {
-                                                                size?.size
-                                                            }
-                                                        </div>
-                                                    )
-                                                )}
+                                                    {product.sizes.map(
+                                                        (
+                                                            size,
+                                                            index
+                                                        ) => (
+                                                            <div
+                                                                key={
+                                                                    size?._id ||
+                                                                    size?.id ||
+                                                                    index
+                                                                }
+                                                                onClick={() =>
+                                                                    setChosenSize(
+                                                                        size
+                                                                    )
+                                                                }
+                                                                className={`w-12 h-12 rounded-full border text-xl font-medium cursor-pointer transition-all flex items-center justify-center uppercase ${chosenSize?.size ===
+                                                                        size?.size
+                                                                        ? "border-black"
+                                                                        : "border-gray-300"
+                                                                    }`}
+                                                            >
+                                                                {
+                                                                    size?.size
+                                                                }
+                                                            </div>
+                                                        )
+                                                    )}
+
+                                                </div>
 
                                             </div>
-
-                                        </div>
-                                    )}
+                                        )}
 
                                 </div>
 
@@ -847,7 +897,7 @@ const ProductInfo = () => {
                                                 size="small"
                                                 disabled={
                                                     quantity <=
-                                                        1 ||
+                                                    1 ||
                                                     isAddingToCart
                                                 }
                                                 onClick={() =>
@@ -914,16 +964,6 @@ const ProductInfo = () => {
                                     <Button
                                         type="button"
                                         size="large"
-                                        loading={
-                                            isAddingToCart
-                                        }
-                                        disabled={
-                                            !product ||
-                                            (product?.sizes
-                                                ?.length >
-                                                0 &&
-                                                !chosenSize)
-                                        }
                                         onClick={
                                             handleBuyNow
                                         }
@@ -1047,27 +1087,27 @@ const ProductInfo = () => {
             >
                 {isLoader
                     ? Array.from({
-                          length: 4,
-                      }).map((_, index) => (
-                          <SwiperSlide
-                              key={index}
-                          >
-                              <ProductCard
-                                  loading
-                              />
-                          </SwiperSlide>
-                      ))
+                        length: 4,
+                    }).map((_, index) => (
+                        <SwiperSlide
+                            key={index}
+                        >
+                            <ProductCard
+                                loading
+                            />
+                        </SwiperSlide>
+                    ))
                     : bestSellingProducts.map(
-                          (item) => (
-                              <SwiperSlide
-                                  key={item._id}
-                              >
-                                  <ProductCard
-                                      product={item}
-                                  />
-                              </SwiperSlide>
-                          )
-                      )}
+                        (item) => (
+                            <SwiperSlide
+                                key={item._id}
+                            >
+                                <ProductCard
+                                    product={item}
+                                />
+                            </SwiperSlide>
+                        )
+                    )}
             </SwiperSectionLayout>
 
             {/* ---------------------------------
@@ -1088,27 +1128,27 @@ const ProductInfo = () => {
             >
                 {isLoader
                     ? Array.from({
-                          length: 4,
-                      }).map((_, index) => (
-                          <SwiperSlide
-                              key={index}
-                          >
-                              <ProductCard
-                                  loading
-                              />
-                          </SwiperSlide>
-                      ))
+                        length: 4,
+                    }).map((_, index) => (
+                        <SwiperSlide
+                            key={index}
+                        >
+                            <ProductCard
+                                loading
+                            />
+                        </SwiperSlide>
+                    ))
                     : bestSellingProducts.map(
-                          (item) => (
-                              <SwiperSlide
-                                  key={item._id}
-                              >
-                                  <ProductCard
-                                      product={item}
-                                  />
-                              </SwiperSlide>
-                          )
-                      )}
+                        (item) => (
+                            <SwiperSlide
+                                key={item._id}
+                            >
+                                <ProductCard
+                                    product={item}
+                                />
+                            </SwiperSlide>
+                        )
+                    )}
             </SwiperSectionLayout>
 
             <ProductBottomBar />
