@@ -151,7 +151,7 @@ export const updateCartItem = async (req, res) => {
   try {
     const { cart_id } = req.query;
     const { quantity } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     if (!cart_id) {
       return res.status(400).json({ message: "cart_id is required" });
@@ -190,7 +190,7 @@ export const updateCartItem = async (req, res) => {
 export const removeCartItem = async (req, res) => {
   try {
     const { cart_id } = req.query;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     if (!cart_id) {
       return res.status(400).json({ message: "cart_id is required" });
