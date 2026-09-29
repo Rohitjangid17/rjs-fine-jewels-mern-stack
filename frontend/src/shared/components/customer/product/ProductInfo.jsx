@@ -357,9 +357,9 @@ Hello, I am interested in this product.
 
 Product: ${productName}
 SKU: ${sku}
-Price: ₹${price.toLocaleString("en-IN")}
+Price: $${price.toLocaleString("en-IN")}
 Quantity: ${quantity}
-Total: ₹${totalPrice.toLocaleString("en-IN")}
+Total: $${totalPrice.toLocaleString("en-IN")}
 
 Size: ${size}
 Color: ${color}
@@ -686,7 +686,7 @@ Please share more details about this product.
 
                                         <p className="text-[#ff6f61] text-3xl font-medium">
 
-                                            ₹
+                                            $
                                             {Number(
                                                 product?.finalPrice ||
                                                 product?.basePrice ||
@@ -703,7 +703,7 @@ Please share more details about this product.
                                                 <p className="text-[#0009] text-3xl font-medium">
 
                                                     <del>
-                                                        ₹
+                                                        $
                                                         {Number(
                                                             product?.basePrice ||
                                                             0
@@ -725,7 +725,7 @@ Please share more details about this product.
                                                         ?.type ===
                                                         "percent"
                                                         ? `${product?.discount?.amount}% Off`
-                                                        : `₹${product?.discount?.amount} Off`}
+                                                        : `$${product?.discount?.amount} Off`}
 
                                                 </span>
                                             )}

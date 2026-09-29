@@ -166,7 +166,7 @@ const Products = () => {
         },
         {
             title: "Price",
-            render: (_, record) => `₹${record.finalPrice}`,
+            render: (_, record) => `$${record.finalPrice}`,
         },
         {
             title: "Category",
@@ -282,7 +282,7 @@ const Products = () => {
                                 {
                                     title: "Variant Price",
                                     dataIndex: "variantPrice",
-                                    render: (price) => price ? `₹${price}` : "-",
+                                    render: (price) => price ? `$${price}` : "-",
                                 },
                                 {
                                     title: "Stock",
@@ -303,7 +303,7 @@ const Products = () => {
                                 {
                                     title: "Making Charges",
                                     dataIndex: "makingCharges",
-                                    render: (value) => value ? `₹${value}` : "-",
+                                    render: (value) => value ? `$${value}` : "-",
                                 },
                                 {
                                     title: "Discount (%)",

@@ -14,7 +14,7 @@ const faqData = [
             },
             {
                 q: 'Do you offer free shipping?',
-                a: 'Yes, we offer free shipping on orders above ₹999. Below that, a nominal fee is charged.'
+                a: 'Yes, we offer free shipping on orders above $999. Below that, a nominal fee is charged.'
             },
             {
                 q: 'Can I change my shipping address after placing an order?',

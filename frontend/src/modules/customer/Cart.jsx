@@ -236,7 +236,7 @@ SKU: ${
                     "N/A"
                 }
 Quantity: ${item?.quantity || 1}
-Price: ₹${finalPrice.toLocaleString(
+Price: $${finalPrice.toLocaleString(
                     "en-IN"
                 )}${
                     variantDetails
@@ -252,13 +252,13 @@ I would like to enquire about the following products:
 
 ${productsMessage}
 
-Subtotal: ₹${Number(
+Subtotal: $${Number(
             summary?.subtotal || 0
         ).toLocaleString("en-IN")}
-Discount: ₹${Number(
+Discount: $${Number(
             summary?.totalDiscount || 0
         ).toLocaleString("en-IN")}
-Total: ₹${Number(
+Total: $${Number(
             summary?.grandTotal || 0
         ).toLocaleString("en-IN")}
 
@@ -341,7 +341,7 @@ Please share the availability and further details.`;
                 return (
                     <div>
                         <span className="font-medium">
-                            ₹
+                            $
                             {finalPrice.toLocaleString(
                                 "en-IN"
                             )}
@@ -349,7 +349,7 @@ Please share the availability and further details.`;
 
                         {discount > 0 && (
                             <p className="text-xs text-green-600 mt-1">
-                                Save ₹
+                                Save $
                                 {discount.toLocaleString(
                                     "en-IN"
                                 )}
@@ -442,7 +442,7 @@ Please share the availability and further details.`;
 
                 return (
                     <span className="font-semibold">
-                        ₹
+                        $
                         {(
                             finalPrice *
                             quantity
@@ -557,7 +557,7 @@ Please share the availability and further details.`;
                                         </span>
 
                                         <span>
-                                            ₹
+                                            $
                                             {Number(
                                                 summary?.subtotal ||
                                                     0
@@ -578,7 +578,7 @@ Please share the availability and further details.`;
                                             </span>
 
                                             <span className="text-green-600">
-                                                -₹
+                                                -$
                                                 {Number(
                                                     summary?.totalDiscount ||
                                                         0
@@ -609,7 +609,7 @@ Please share the availability and further details.`;
                                         </span>
 
                                         <span className="text-[#ff6f61]">
-                                            ₹
+                                            $
                                             {Number(
                                                 summary?.grandTotal ||
                                                     0

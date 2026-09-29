@@ -33,8 +33,8 @@ const policies = [
         id: 4,
         title: "4. Shipping Charges",
         descriptions: [
-            "We offer free standard shipping on orders above ₹999 across India.",
-            "For orders below ₹999, a nominal shipping charge of ₹49 will be applied at checkout.",
+            "We offer free standard shipping on orders above $999 across India.",
+            "For orders below $999, a nominal shipping charge of $49 will be applied at checkout.",
             "Additional surcharges may apply for heavy or oversized items. If applicable, these charges will be clearly mentioned on the product page and during checkout."
         ]
     },
@@ -42,7 +42,7 @@ const policies = [
         id: 5,
         title: "5. Cash on Delivery (COD)",
         descriptions: [
-            "Cash on Delivery is available for select pin codes within India. We charge an additional fee of ₹50 for COD orders to cover handling costs.",
+            "Cash on Delivery is available for select pin codes within India. We charge an additional fee of $50 for COD orders to cover handling costs.",
             "COD is not available for customized products, bulk orders, or international shipments."
         ]
     },
