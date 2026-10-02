@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+
 import {
     FiSearch,
     FiUser,
@@ -8,8 +9,10 @@ import {
     FiMenu,
     FiX,
 } from "react-icons/fi";
+
 import { AiOutlineHome } from "react-icons/ai";
 import { MdOutlineStorefront } from "react-icons/md";
+
 import {
     Drawer,
     Button,
@@ -26,8 +29,18 @@ import {
 } from "../../constants";
 
 import CustomerAuthModel from "./modals/CustomerAuthModel";
+
 import { authService } from "../../../services/authService";
-import { useCart } from "../../../hooks";
+
+import {
+    useCart,
+    useWishlist,
+} from "../../../hooks";
+
+
+// =====================================================
+// DESKTOP NAV LINKS
+// =====================================================
 
 const navLinks = [
     {
@@ -52,6 +65,11 @@ const navLinks = [
     },
 ];
 
+
+// =====================================================
+// MOBILE MENU ITEMS
+// =====================================================
+
 const mobileMenuItems = [
     {
         label: "Home",
@@ -73,7 +91,6 @@ const mobileMenuItems = [
         label: "Wishlist",
         path: "/wishlist",
         icon: <FiHeart size={20} />,
-        badge: 3,
         authOnly: true,
     },
     {
@@ -84,38 +101,104 @@ const mobileMenuItems = [
     },
 ];
 
+
+// =====================================================
+// CUSTOMER HEADER
+// =====================================================
+
 const CustomerHeader = () => {
-    const [messageApi, contextHolder] = notification.useNotification();
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [userDrawerOpen, setUserDrawerOpen] = useState(false);
-    const [isLogin, setIsLogin] = useState(true);
-    const [searchOpen, setSearchOpen] = useState(false);
-    const [isLoader, setIsLoader] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("customer_token"));
+
+    const [messageApi, contextHolder] =
+        notification.useNotification();
+
+    const [menuOpen, setMenuOpen] =
+        useState(false);
+
+    const [userDrawerOpen, setUserDrawerOpen] =
+        useState(false);
+
+    const [isLogin, setIsLogin] =
+        useState(true);
+
+    const [searchOpen, setSearchOpen] =
+        useState(false);
+
+    const [isLoader, setIsLoader] =
+        useState(false);
+
+    const [isAuthenticated, setIsAuthenticated] =
+        useState(
+            !!localStorage.getItem("customer_token")
+        );
+
     const location = useLocation();
+
     const [form] = Form.useForm();
 
-    // Cart Context
-    const { cartCount, getCart } = useCart();
 
-    // Close mobile menu when route changes
+    // =====================================================
+    // CART CONTEXT
+    // =====================================================
+
+    const {
+        cartCount,
+        getCart,
+    } = useCart();
+
+
+    // =====================================================
+    // WISHLIST CONTEXT
+    // =====================================================
+
+    const {
+        wishlistCount,
+        getWishlist,
+    } = useWishlist();
+
+
+    // =====================================================
+    // CLOSE MOBILE MENU WHEN ROUTE CHANGES
+    // =====================================================
+
     useEffect(() => {
         setMenuOpen(false);
     }, [location.pathname]);
 
-    // Get cart after customer login
+
+    // =====================================================
+    // GET CART AFTER CUSTOMER LOGIN
+    // =====================================================
+
     useEffect(() => {
+
         if (isAuthenticated) {
             getCart();
         }
+
     }, [isAuthenticated, getCart]);
 
-    // ------------------------------------------
+
+    // =====================================================
+    // GET WISHLIST AFTER CUSTOMER LOGIN
+    // =====================================================
+
+    useEffect(() => {
+
+        if (isAuthenticated) {
+            getWishlist();
+        }
+
+    }, [isAuthenticated, getWishlist]);
+
+
+    // =====================================================
     // CUSTOMER LOGIN
-    // ------------------------------------------
+    // =====================================================
 
     const customerLogin = async (payload) => {
+
         try {
+
             setIsLoader(true);
 
             console.log(
@@ -134,6 +217,7 @@ const CustomerHeader = () => {
             );
 
             if (response.success) {
+
                 localStorage.setItem(
                     "customer_token",
                     response?.user?.token
@@ -158,10 +242,14 @@ const CustomerHeader = () => {
                 });
 
                 setUserDrawerOpen(false);
+
                 setIsLogin(true);
+
                 form.resetFields();
             }
+
         } catch (error) {
+
             messageApi.error({
                 message: "Server Error",
                 description:
@@ -169,17 +257,22 @@ const CustomerHeader = () => {
                     SOMETHING_WENT_WRONG,
                 placement: "topRight",
             });
+
         } finally {
+
             setIsLoader(false);
         }
     };
 
-    // ------------------------------------------
+
+    // =====================================================
     // CUSTOMER REGISTER
-    // ------------------------------------------
+    // =====================================================
 
     const customerRegister = async (payload) => {
+
         try {
+
             setIsLoader(true);
 
             console.log(
@@ -198,6 +291,7 @@ const CustomerHeader = () => {
             );
 
             if (response.success) {
+
                 localStorage.setItem(
                     "customer_token",
                     response?.user?.token
@@ -222,10 +316,14 @@ const CustomerHeader = () => {
                 });
 
                 setUserDrawerOpen(false);
+
                 setIsLogin(true);
+
                 form.resetFields();
             }
+
         } catch (error) {
+
             messageApi.error({
                 message: "Server Error",
                 description:
@@ -233,50 +331,77 @@ const CustomerHeader = () => {
                     SOMETHING_WENT_WRONG,
                 placement: "topRight",
             });
+
         } finally {
+
             setIsLoader(false);
         }
     };
+
+
+    // =====================================================
+    // RETURN
+    // =====================================================
 
     return (
         <>
             {contextHolder}
 
-            {/* ================= HEADER ================= */}
 
-            <header className="sticky top-0 z-50 bg-white px-4 shadow-sm">
+            {/* =================================================
+                HEADER
+            ================================================= */}
+
+            <header className="sticky top-0 z-50 bg-white px-4">
+
                 <div className="container mx-auto">
 
-                    {/* ================= NAVBAR ================= */}
+
+                    {/* =================================================
+                        NAVBAR
+                    ================================================= */}
 
                     <nav className="flex items-center justify-between py-6 bg-white">
 
-                        {/* LEFT SIDE */}
+
+                        {/* =================================================
+                            LEFT SIDE
+                        ================================================= */}
 
                         <div className="grow">
+
 
                             {/* DESKTOP NAV */}
 
                             <ul className="hidden md:flex gap-8">
+
                                 {navLinks.map((link) => (
+
                                     <li key={link.label}>
+
                                         <Link
                                             to={link.path}
-                                            className={`text-sm font-medium hover:text-[#ff6f61] transition ${location.pathname ===
+                                            className={`text-sm font-medium hover:text-[#ff6f61] transition ${
+                                                location.pathname ===
                                                 link.path
-                                                ? "text-[#ff6f61]"
-                                                : ""
-                                                }`}
+                                                    ? "text-[#ff6f61]"
+                                                    : ""
+                                            }`}
                                         >
                                             {link.label}
                                         </Link>
+
                                     </li>
+
                                 ))}
+
                             </ul>
+
 
                             {/* MOBILE MENU ICON */}
 
                             <div className="md:hidden">
+
                                 <FiMenu
                                     size={24}
                                     className="cursor-pointer"
@@ -284,25 +409,39 @@ const CustomerHeader = () => {
                                         setMenuOpen(true)
                                     }
                                 />
+
                             </div>
+
                         </div>
 
-                        {/* ================= LOGO ================= */}
+
+                        {/* =================================================
+                            LOGO
+                        ================================================= */}
 
                         <div className="grow flex justify-center md:inline">
+
                             <Link to="/home">
+
                                 <img
                                     src={COMPANY_LOGO}
                                     className="object-cover w-[100px] h-[50px]"
                                     alt="logo"
                                 />
+
                             </Link>
+
                         </div>
 
-                        {/* ================= RIGHT SIDE ================= */}
+
+                        {/* =================================================
+                            RIGHT SIDE
+                        ================================================= */}
 
                         <div className="grow">
+
                             <div className="flex gap-4 items-center justify-end">
+
 
                                 {/* SEARCH */}
 
@@ -314,80 +453,107 @@ const CustomerHeader = () => {
                                     }
                                 />
 
+
                                 {/* USER */}
 
                                 <FiUser
                                     size={20}
                                     className="cursor-pointer hidden md:block text-black hover:text-[#ff6f61] transition"
                                     onClick={() =>
-                                        setUserDrawerOpen(
-                                            true
-                                        )
+                                        setUserDrawerOpen(true)
                                     }
                                 />
 
-                                {/* ================= WISHLIST ================= */}
+
+                                {/* =================================================
+                                    WISHLIST
+                                ================================================= */}
 
                                 {isAuthenticated && (
+
                                     <div className="relative hidden md:block">
 
                                         <Link to="/wishlist">
 
                                             <FiHeart
                                                 size={20}
-                                                className={`cursor-pointer transition ${location.pathname ===
+                                                className={`cursor-pointer transition ${
+                                                    location.pathname ===
                                                     "/wishlist"
-                                                    ? "text-[#ff6f61]"
-                                                    : "text-black hover:text-[#ff6f61]"
-                                                    }`}
+                                                        ? "text-[#ff6f61]"
+                                                        : "text-black hover:text-[#ff6f61]"
+                                                }`}
                                             />
 
-                                            {/* Wishlist Count */}
 
-                                            <span className="absolute -top-2 -right-2 bg-[#ff6f61] text-white text-xs rounded-full px-1">
-                                                3
-                                            </span>
+                                            {/* Dynamic Wishlist Count */}
+
+                                            {wishlistCount > 0 && (
+
+                                                <span className="absolute -top-2 -right-2 bg-[#ff6f61] text-white text-xs rounded-full px-1">
+
+                                                    {wishlistCount}
+
+                                                </span>
+
+                                            )}
 
                                         </Link>
 
                                     </div>
+
                                 )}
 
-                                {/* ================= CART ================= */}
+
+                                {/* =================================================
+                                    CART
+                                ================================================= */}
 
                                 {isAuthenticated && (
+
                                     <div className="relative">
 
                                         <Link to="/cart">
 
                                             <FiShoppingBag
                                                 size={20}
-                                                className={`cursor-pointer transition ${location.pathname ===
+                                                className={`cursor-pointer transition ${
+                                                    location.pathname ===
                                                     "/cart"
-                                                    ? "text-[#ff6f61]"
-                                                    : "text-black hover:text-[#ff6f61]"
-                                                    }`}
+                                                        ? "text-[#ff6f61]"
+                                                        : "text-black hover:text-[#ff6f61]"
+                                                }`}
                                             />
+
 
                                             {/* Dynamic Cart Count */}
 
                                             {cartCount > 0 && (
+
                                                 <span className="absolute -top-2 -right-2 bg-[#ff6f61] text-white text-xs rounded-full px-1">
+
                                                     {cartCount}
+
                                                 </span>
+
                                             )}
 
                                         </Link>
 
                                     </div>
+
                                 )}
 
                             </div>
+
                         </div>
 
                     </nav>
 
-                    {/* ================= MOBILE DRAWER ================= */}
+
+                    {/* =================================================
+                        MOBILE DRAWER
+                    ================================================= */}
 
                     <Drawer
                         placement="left"
@@ -398,6 +564,7 @@ const CustomerHeader = () => {
                         width={320}
                         closable={false}
                     >
+
 
                         {/* CLOSE BUTTON */}
 
@@ -414,6 +581,7 @@ const CustomerHeader = () => {
 
                         </div>
 
+
                         {/* MOBILE NAV */}
 
                         <div>
@@ -421,28 +589,37 @@ const CustomerHeader = () => {
                             <ul>
 
                                 {navLinks.map((link) => (
+
                                     <li
                                         key={link.label}
                                         className="border-b last:border-b-0 border-[#ebebeb] py-3"
                                     >
+
                                         <Link
                                             to={link.path}
-                                            className={`text-sm font-medium hover:text-[#ff6f61] transition ${location.pathname ===
+                                            className={`text-sm font-medium hover:text-[#ff6f61] transition ${
+                                                location.pathname ===
                                                 link.path
-                                                ? "text-[#ff6f61]"
-                                                : ""
-                                                }`}
+                                                    ? "text-[#ff6f61]"
+                                                    : ""
+                                            }`}
                                         >
                                             {link.label}
                                         </Link>
+
                                     </li>
+
                                 ))}
 
                             </ul>
 
-                            {/* MOBILE ACTION BUTTONS */}
+
+                            {/* =================================================
+                                MOBILE ACTION BUTTONS
+                            ================================================= */}
 
                             <div className="flex items-center gap-4 mt-4">
+
 
                                 {/* WISHLIST */}
 
@@ -453,14 +630,28 @@ const CustomerHeader = () => {
                                     }
                                     className="flex items-center justify-center gap-2 bg-[#ebebeb] rounded text-black font-semibold px-4 py-[10px] text-base hover:bg-black hover:text-white transition duration-300 ease-in-out"
                                 >
+
                                     <FiHeart size={16} />
 
                                     Wishlist
+
+                                    {wishlistCount > 0 && (
+
+                                        <span className="text-[10px] bg-[#ff6f61] text-white rounded-full px-1">
+
+                                            {wishlistCount}
+
+                                        </span>
+
+                                    )}
+
                                 </Link>
+
 
                                 {/* LOGIN */}
 
                                 {!isAuthenticated && (
+
                                     <Button
                                         type="default"
                                         size="large"
@@ -470,27 +661,27 @@ const CustomerHeader = () => {
                                             />
                                         }
                                         onClick={() => {
-                                            setMenuOpen(
-                                                false
-                                            );
 
-                                            setIsLogin(
-                                                true
-                                            );
+                                            setMenuOpen(false);
 
-                                            setUserDrawerOpen(
-                                                true
-                                            );
+                                            setIsLogin(true);
+
+                                            setUserDrawerOpen(true);
+
                                         }}
                                         className="bg-[#ebebeb] !rounded !border-none !shadow-none hover:!bg-black text-black font-semibold hover:!text-white"
                                     >
                                         Login
                                     </Button>
+
                                 )}
 
                             </div>
 
-                            {/* HELP SECTION */}
+
+                            {/* =================================================
+                                HELP SECTION
+                            ================================================= */}
 
                             <div className="flex flex-col gap-y-3 mt-4">
 
@@ -501,21 +692,33 @@ const CustomerHeader = () => {
                                     Need Help?
                                 </Link>
 
+
                                 <ul className="flex flex-col gap-y-3">
 
                                     <li className="text-[#545454] text-sm">
+
                                         Address:{" "}
+
                                         {COMPANY_ADDRESS}
+
                                     </li>
 
+
                                     <li className="text-[#545454] text-sm">
+
                                         Email:{" "}
+
                                         {SUPPORT_EMAIL}
+
                                     </li>
 
+
                                     <li className="text-[#545454] text-sm">
+
                                         Phone:{" "}
+
                                         {SUPPORT_PHONE}
+
                                     </li>
 
                                 </ul>
@@ -526,11 +729,15 @@ const CustomerHeader = () => {
 
                     </Drawer>
 
-                    {/* ================= MOBILE BOTTOM NAV ================= */}
+
+                    {/* =================================================
+                        MOBILE BOTTOM NAV
+                    ================================================= */}
 
                     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow z-40">
 
                         <ul className="flex justify-around text-xs px-[15px] py-[11px]">
+
 
                             {mobileMenuItems
                                 .filter(
@@ -545,28 +752,35 @@ const CustomerHeader = () => {
                                         className="relative"
                                     >
 
+
                                         {/* ACCOUNT BUTTON */}
 
                                         {item.openModal ? (
+
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    setIsLogin(
-                                                        true
-                                                    );
+
+                                                    setIsLogin(true);
 
                                                     setUserDrawerOpen(
                                                         true
                                                     );
+
                                                 }}
                                                 className="flex flex-col items-center gap-y-[5px] text-black bg-transparent border-none"
                                             >
+
                                                 {item.icon}
 
                                                 <span className="text-[13px] font-medium text-black">
+
                                                     {item.label}
+
                                                 </span>
+
                                             </button>
+
                                         ) : (
 
                                             /* NORMAL LINK */
@@ -579,45 +793,57 @@ const CustomerHeader = () => {
                                                 {item.icon}
 
                                                 <span className="text-[13px] font-medium text-black">
+
                                                     {item.label}
+
                                                 </span>
+
 
                                                 {/* WISHLIST BADGE */}
 
                                                 {item.label ===
                                                     "Wishlist" &&
-                                                    item.badge && (
+                                                    wishlistCount > 0 && (
+
                                                         <span className="absolute top-0 right-2 text-[10px] bg-[#ff6f61] text-white rounded-full px-1">
-                                                            {
-                                                                item.badge
-                                                            }
+
+                                                            {wishlistCount}
+
                                                         </span>
+
                                                     )}
+
 
                                                 {/* CART BADGE */}
 
                                                 {item.label ===
                                                     "Cart" &&
-                                                    cartCount >
-                                                    0 && (
+                                                    cartCount > 0 && (
+
                                                         <span className="absolute top-0 right-2 text-[10px] bg-[#ff6f61] text-white rounded-full px-1">
-                                                            {
-                                                                cartCount
-                                                            }
+
+                                                            {cartCount}
+
                                                         </span>
+
                                                     )}
 
                                             </Link>
+
                                         )}
 
                                     </li>
+
                                 ))}
 
                         </ul>
 
                     </div>
 
-                    {/* ================= AUTH MODAL ================= */}
+
+                    {/* =================================================
+                        AUTH MODAL
+                    ================================================= */}
 
                     <CustomerAuthModel
                         open={userDrawerOpen}
@@ -634,7 +860,10 @@ const CustomerHeader = () => {
                         form={form}
                     />
 
-                    {/* ================= SEARCH DRAWER ================= */}
+
+                    {/* =================================================
+                        SEARCH DRAWER
+                    ================================================= */}
 
                     <Drawer
                         placement="top"
@@ -661,12 +890,15 @@ const CustomerHeader = () => {
 
                         </div>
 
+
                         {/* SEARCH CONTENT */}
 
                         <div className="py-6">
 
                             <h2 className="text-[32px] text-center mb-[42px] font-medium">
+
                                 What are you looking for?
+
                             </h2>
 
                         </div>
@@ -674,6 +906,7 @@ const CustomerHeader = () => {
                     </Drawer>
 
                 </div>
+
             </header>
         </>
     );

@@ -4,13 +4,16 @@ import { App as AntApp } from 'antd'
 import './index.css'
 import App from './App.jsx'
 import { CartProvider } from './context/CartContext.jsx'
+import { WishlistProvider } from './context/WishlistContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <CartProvider>
-      <AntApp>
-        <App />
-      </AntApp>
+      <WishlistProvider>
+        <AntApp>
+          <App />
+        </AntApp>
+      </WishlistProvider>
     </CartProvider>
   </StrictMode>,
 )

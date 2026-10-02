@@ -19,6 +19,7 @@ import {
 
 import CommonBanner from "../../shared/components/customer/banner/CommonBanner";
 import { cartService } from "../../services/cartService";
+import { useCart } from "../../hooks";
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -32,6 +33,8 @@ const Cart = () => {
     const [loading, setLoading] = useState(true);
     const [updatingId, setUpdatingId] = useState(null);
     const [removingId, setRemovingId] = useState(null);
+
+    const { refreshCart } = useCart();
 
     useEffect(() => {
         getCartList();
@@ -60,7 +63,7 @@ const Cart = () => {
 
             message.error(
                 error?.response?.data?.message ||
-                    "Unable to fetch cart"
+                "Unable to fetch cart"
             );
 
             setCartItems([]);
@@ -87,8 +90,8 @@ const Cart = () => {
             type === "increase"
                 ? currentQuantity + 1
                 : currentQuantity > 1
-                ? currentQuantity - 1
-                : 1;
+                    ? currentQuantity - 1
+                    : 1;
 
         if (newQuantity === currentQuantity) {
             return;
@@ -120,7 +123,7 @@ const Cart = () => {
 
             message.error(
                 error?.response?.data?.message ||
-                    "Unable to update quantity"
+                "Unable to update quantity"
             );
         } finally {
             setUpdatingId(null);
@@ -130,15 +133,10 @@ const Cart = () => {
     /**
      * Remove item
      */
-    const handleRemove = async (cartId) => {
+    const deleteCartById = async (cartId) => {
         try {
             setRemovingId(cartId);
-
-            const cart =
-                await cartService.removeCartItem(
-                    cartId
-                );
-
+            const cart = await cartService.removeCartItem(cartId);
             setCartItems(cart?.items || []);
 
             setSummary(
@@ -149,19 +147,11 @@ const Cart = () => {
                 }
             );
 
-            message.success(
-                "Item removed from cart"
-            );
+            await refreshCart();
+            message.success("Item removed from cart");
         } catch (error) {
-            console.error(
-                "Remove cart item error:",
-                error
-            );
-
-            message.error(
-                error?.response?.data?.message ||
-                    "Unable to remove item"
-            );
+            console.error("Remove cart item error:", error);
+            message.error(error?.response?.data?.message || "Unable to remove item");
         } finally {
             setRemovingId(null);
         }
@@ -230,19 +220,17 @@ const Cart = () => {
                     );
 
                 return `${index + 1}. ${productName}
-SKU: ${
-                    item?.snapshot?.sku ||
+SKU: ${item?.snapshot?.sku ||
                     item?.productId?.sku ||
                     "N/A"
-                }
+                    }
 Quantity: ${item?.quantity || 1}
 Price: $${finalPrice.toLocaleString(
-                    "en-IN"
-                )}${
-                    variantDetails
+                        "en-IN"
+                    )}${variantDetails
                         ? `\n${variantDetails}`
                         : ""
-                }`;
+                    }`;
             })
             .join("\n\n");
 
@@ -329,13 +317,13 @@ Please share the availability and further details.`;
                 const finalPrice =
                     Number(
                         record?.price?.finalPrice ||
-                            0
+                        0
                     );
 
                 const discount =
                     Number(
                         record?.price?.discount ||
-                            0
+                        0
                     );
 
                 return (
@@ -375,11 +363,11 @@ Please share the availability and further details.`;
                         disabled={
                             record.quantity <= 1 ||
                             updatingId ===
-                                record._id
+                            record._id
                         }
                         loading={
                             updatingId ===
-                                record._id &&
+                            record._id &&
                             record.quantity > 1
                         }
                         onClick={() =>
@@ -432,7 +420,7 @@ Please share the availability and further details.`;
                 const finalPrice =
                     Number(
                         record?.price?.finalPrice ||
-                            0
+                        0
                     );
 
                 const quantity =
@@ -475,7 +463,7 @@ Please share the availability and further details.`;
                         record._id
                     }
                     onClick={() =>
-                        handleRemove(
+                        deleteCartById(
                             record._id
                         )
                     }
@@ -496,7 +484,7 @@ Please share the availability and further details.`;
                             <Spin size="large" />
                         </div>
                     ) : cartItems.length ===
-                      0 ? (
+                        0 ? (
                         <div className="flex flex-col items-center justify-center min-h-[50vh]">
                             <Empty
                                 description={
@@ -560,7 +548,7 @@ Please share the availability and further details.`;
                                             $
                                             {Number(
                                                 summary?.subtotal ||
-                                                    0
+                                                0
                                             ).toLocaleString(
                                                 "en-IN"
                                             )}
@@ -570,24 +558,24 @@ Please share the availability and further details.`;
                                     {/* Discount */}
                                     {Number(
                                         summary?.totalDiscount ||
-                                            0
+                                        0
                                     ) > 0 && (
-                                        <div className="flex justify-between text-[#545454]">
-                                            <span>
-                                                Discount
-                                            </span>
+                                            <div className="flex justify-between text-[#545454]">
+                                                <span>
+                                                    Discount
+                                                </span>
 
-                                            <span className="text-green-600">
-                                                -$
-                                                {Number(
-                                                    summary?.totalDiscount ||
+                                                <span className="text-green-600">
+                                                    -$
+                                                    {Number(
+                                                        summary?.totalDiscount ||
                                                         0
-                                                ).toLocaleString(
-                                                    "en-IN"
-                                                )}
-                                            </span>
-                                        </div>
-                                    )}
+                                                    ).toLocaleString(
+                                                        "en-IN"
+                                                    )}
+                                                </span>
+                                            </div>
+                                        )}
 
                                     {/* Shipping */}
                                     <div className="flex justify-between text-[#545454]">
@@ -612,7 +600,7 @@ Please share the availability and further details.`;
                                             $
                                             {Number(
                                                 summary?.grandTotal ||
-                                                    0
+                                                0
                                             ).toLocaleString(
                                                 "en-IN"
                                             )}
