@@ -1,183 +1,551 @@
-import { Button, Pagination, Select, Drawer } from "antd";
+import { Button, Pagination, Select, Drawer, } from "antd";
 import ProductCard from "../product/ProductCard";
 import SidebarFilters from "./filters/SidebarFilters";
-import axios from 'axios';
-import React, { useEffect, useState } from "react";
-import { FiList, FiPackage } from "react-icons/fi";
+import React, { useEffect, useState, } from "react";
+import { FiList, FiPackage, } from "react-icons/fi";
 import { productService } from "../../../../services/productService";
-import { API_BASE_URL } from "../../../constants";
 
 const { Option } = Select;
 
 const ShopSection = () => {
-    const [products, setProducts] = useState([]);
-    const [isLoader, setIsLoader] = useState(true);
-    const [selectedSortBy, setSelectedSortBy] = useState("default")
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [categoryId, setCategoryId] = useState(null);
 
-    const total = 50;
+    // =====================================================
+    // PRODUCTS
+    // =====================================================
+
+    const [products, setProducts] = useState([]);
+
+    const [isLoader, setIsLoader] =
+        useState(true);
+
+
+    // =====================================================
+    // FILTER / SORT
+    // =====================================================
+
+    const [selectedSortBy, setSelectedSortBy] =
+        useState("default");
+
+    const [categoryId, setCategoryId] =
+        useState(null);
+
+
+    // =====================================================
+    // DRAWER
+    // =====================================================
+
+    const [isDrawerOpen, setIsDrawerOpen] =
+        useState(false);
+
+
+    // =====================================================
+    // PAGINATION
+    // =====================================================
+
+    const [current, setCurrent] =
+        useState(1);
+
     const pageSize = 9;
-    const current = 1;
+
+
+    // =====================================================
+    // GET PRODUCTS
+    // =====================================================
 
     useEffect(() => {
+
+        setCurrent(1);
+
         if (categoryId) {
+
             getProductsByCategory(categoryId);
-        } else if (selectedSortBy === "default") {
+
+        } else if (
+            selectedSortBy === "default"
+        ) {
+
             getAllProducts();
+
         } else {
-            getSortedProducts(selectedSortBy);
-        }
-        // const timer = setTimeout(() => {
-        //     if (categoryId) {
-        //         getProductsByCategory(categoryId);
-        //     } else if (selectedSortBy === "default") {
-        //         getAllProducts();
-        //     } else {
-        //         getSortedProducts(selectedSortBy);
-        //     }
-        // }, 2000);
-        // return () => clearTimeout(timer);
-    }, [selectedSortBy, categoryId]);
 
-    // get all products
+            getSortedProducts(
+                selectedSortBy
+            );
+        }
+
+    }, [
+        selectedSortBy,
+        categoryId,
+    ]);
+
+
+    // =====================================================
+    // GET ALL PRODUCTS
+    // =====================================================
+
     const getAllProducts = async () => {
-        setIsLoader(true);
-        try {
-            const response = await axios.get(`${API_BASE_URL}/product`);
-            setProducts(response.data.products || []);
-            console.log("product data ", response.data.products);
-        } catch (error) {
-            setProducts([]);
-            console.error("API Error:", error.message);
-        } finally {
-            setIsLoader(false);
-        }
-    }
 
-    // get sorted product
-    const getSortedProducts = async (sort_by) => {
         setIsLoader(true);
+
         try {
-            const response = await productService.getSortedProducts(sort_by);
-            setProducts(response.products || []);
-            console.log("Sorted Products:", response.products);
+
+            const response =
+                await productService.getAllProducts();
+
+            setProducts(
+                response?.products || []
+            );
+
+            console.log(
+                "Product Data:",
+                response?.products
+            );
+
         } catch (error) {
-            console.error("API Error:", error.message);
+
             setProducts([]);
+
+            console.error(
+                "API Error:",
+                error?.message
+            );
+
         } finally {
+
             setIsLoader(false);
+
         }
     };
 
-    // get products by category
-    const getProductsByCategory = async (category_id) => {
-        setIsLoader(true);
-        try {
-            const response = await productService.getProductsByCategory(category_id);
-            setProducts(response.products || []);
-            console.log("Category Products:", response.products);
-        } catch (error) {
-            console.error("API Error:", error.message);
-            setProducts([]);
-        } finally {
-            setIsLoader(false);
-        }
-    }
 
-    const itemRender = (page, type, originalElement) => {
+    // =====================================================
+    // GET SORTED PRODUCTS
+    // =====================================================
+
+    const getSortedProducts = async (
+        sort_by
+    ) => {
+
+        setIsLoader(true);
+
+        try {
+
+            const response =
+                await productService.getSortedProducts(
+                    sort_by
+                );
+
+            setProducts(
+                response?.products || []
+            );
+
+            console.log(
+                "Sorted Products:",
+                response?.products
+            );
+
+        } catch (error) {
+
+            setProducts([]);
+
+            console.error(
+                "API Error:",
+                error?.message
+            );
+
+        } finally {
+
+            setIsLoader(false);
+
+        }
+    };
+
+
+    // =====================================================
+    // GET PRODUCTS BY CATEGORY
+    // =====================================================
+
+    const getProductsByCategory = async (
+        category_id
+    ) => {
+
+        setIsLoader(true);
+
+        try {
+
+            const response =
+                await productService.getProductsByCategory(
+                    category_id
+                );
+
+            setProducts(
+                response?.products || []
+            );
+
+            console.log(
+                "Category Products:",
+                response?.products
+            );
+
+        } catch (error) {
+
+            setProducts([]);
+
+            console.error(
+                "API Error:",
+                error?.message
+            );
+
+        } finally {
+
+            setIsLoader(false);
+
+        }
+    };
+
+
+    // =====================================================
+    // PAGINATION DATA
+    // =====================================================
+
+    const total = products.length;
+
+    const startIndex =
+        (current - 1) * pageSize;
+
+    const endIndex =
+        startIndex + pageSize;
+
+    const paginatedProducts =
+        products.slice(
+            startIndex,
+            endIndex
+        );
+
+
+    // =====================================================
+    // PAGE CHANGE
+    // =====================================================
+
+    const handlePageChange = (page) => {
+
+        setCurrent(page);
+
+        // Scroll to product section
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    };
+
+
+    // =====================================================
+    // PAGINATION ITEM RENDER
+    // =====================================================
+
+    const itemRender = (
+        page,
+        type,
+        originalElement
+    ) => {
+
         if (type === "page") {
-            return React.cloneElement(originalElement, {
-                className: `${originalElement.props.className || ""} circle-page`,
-            });
+
+            return React.cloneElement(
+                originalElement,
+                {
+                    className: `${originalElement.props.className ||
+                        ""
+                        } circle-page`,
+                }
+            );
         }
-        if (type === "prev" || type === "next") {
-            return React.cloneElement(originalElement, {
-                className: `${originalElement.props.className || ""} circle-nav`,
-            });
+
+        if (
+            type === "prev" ||
+            type === "next"
+        ) {
+
+            return React.cloneElement(
+                originalElement,
+                {
+                    className: `${originalElement.props.className ||
+                        ""
+                        } circle-nav`,
+                }
+            );
         }
+
         return originalElement;
     };
 
+
+    // =====================================================
+    // RETURN
+    // =====================================================
+
     return (
+
         <section className="py-8 sm:py-12 px-4">
+
             <div className="container mx-auto">
+
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
+
+
+                    {/* =================================================
+                        DESKTOP FILTER
+                    ================================================= */}
+
                     <div className="col-span-3 hidden lg:block">
-                        <SidebarFilters onCategorySelect={(id) => setCategoryId(id)} />
+
+                        <SidebarFilters
+                            onCategorySelect={(id) => {
+                                setCategoryId(id);
+                                setCurrent(1);
+                            }}
+                        />
+
                     </div>
 
+
+                    {/* =================================================
+                        PRODUCTS
+                    ================================================= */}
+
                     <div className="col-span-12 lg:col-span-9">
+
+
+                        {/* =================================================
+                            FILTER / SORT
+                        ================================================= */}
+
                         <div className="flex items-center gap-1.5 mb-6 md:mb-10">
-                            <Button type="default" size="large" onClick={() => setIsDrawerOpen(true)} className="lg:hidden flex items-center gap-2 transition-all duration-300 ease-in-out !text-black rounded-full !border !border-[#EBEBEE] hover:!border-black">
+
+
+                            {/* MOBILE FILTER */}
+
+                            <Button
+                                type="default"
+                                size="large"
+                                onClick={() =>
+                                    setIsDrawerOpen(true)
+                                }
+                                className="lg:hidden flex items-center gap-2 transition-all duration-300 ease-in-out !text-black rounded-full !border !border-[#EBEBEE] hover:!border-black"
+                            >
+
                                 <FiList size={18} />
+
                                 Filter
+
                             </Button>
+
+
+                            {/* SORT */}
+
                             <div className="max-w-[220px] min-w-[244px]">
-                                <Select value={selectedSortBy} onChange={(value) => setSelectedSortBy(value)} size="large"
-                                    className="w-full !shadow-none [&_.ant-select-selector]:!shadow-none rounded-full [&_.ant-select-selector]:!rounded-full [&_.ant-select-selector]:!border-[#EBEBEE] hover:[&_.ant-select-selector]:!border-black focus:[&_.ant-select-selector]:!border-black focus:[&_.ant-select-selector]:!shadow-none transition-all duration-300 ease-in-out">
+
+                                <Select
+                                    value={
+                                        selectedSortBy
+                                    }
+                                    onChange={(value) => {
+
+                                        setSelectedSortBy(
+                                            value
+                                        );
+
+                                        setCurrent(1);
+
+                                    }}
+                                    size="large"
+                                    className="w-full !shadow-none [&_.ant-select-selector]:!shadow-none rounded-full [&_.ant-select-selector]:!rounded-full [&_.ant-select-selector]:!border-[#EBEBEE] hover:[&_.ant-select-selector]:!border-black focus:[&_.ant-select-selector]:!border-black focus:[&_.ant-select-selector]:!shadow-none transition-all duration-300 ease-in-out"
+                                >
+
                                     <Option value="default">
                                         Sort By (Default)
                                     </Option>
-                                    <Option value="title_asc">Title Ascending</Option>
-                                    <Option value="title_desc">Title Descending</Option>
-                                    <Option value="price_asc">Price Ascending</Option>
-                                    <Option value="price_desc">Price Descending</Option>
+
+                                    <Option value="title_asc">
+                                        Title Ascending
+                                    </Option>
+
+                                    <Option value="title_desc">
+                                        Title Descending
+                                    </Option>
+
+                                    <Option value="price_asc">
+                                        Price Ascending
+                                    </Option>
+
+                                    <Option value="price_desc">
+                                        Price Descending
+                                    </Option>
+
                                 </Select>
+
                             </div>
+
                         </div>
+
+
+                        {/* =================================================
+                            LOADING
+                        ================================================= */}
 
                         {isLoader ? (
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                {Array.from({ length: 9 }).map((_, index) => (
-                                    <ProductCard key={index} loading />
-                                ))}
+
+                                {Array.from({
+                                    length: pageSize,
+                                }).map(
+                                    (_, index) => (
+
+                                        <ProductCard
+                                            key={index}
+                                            loading
+                                        />
+
+                                    )
+                                )}
+
                             </div>
-                        ) : products.length > 0 ? (
+
+
+                        ) : paginatedProducts.length > 0 ? (
+
+
+                            /* =================================================
+                                PAGINATED PRODUCTS
+                            ================================================= */
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                                {products.map((product, index) => (
-                                    <ProductCard key={index} product={product} />
-                                ))}
+
+                                {paginatedProducts.map(
+                                    (product) => (
+
+                                        <ProductCard
+                                            key={
+                                                product?._id
+                                            }
+                                            product={
+                                                product
+                                            }
+                                        />
+
+                                    )
+                                )}
+
                             </div>
+
+
                         ) : (
+
+
+                            /* =================================================
+                                NO PRODUCTS
+                            ================================================= */
+
                             <div className="flex flex-col items-center justify-center py-20 text-center">
+
                                 <div className="w-20 h-20 flex items-center justify-center rounded-full bg-[#f5f5f5] mb-4">
-                                    <FiPackage size={40} className="text-[#ff6f61]" />
+
+                                    <FiPackage
+                                        size={40}
+                                        className="text-[#ff6f61]"
+                                    />
+
                                 </div>
+
                                 <h2 className="text-2xl font-semibold text-black mb-2">
+
                                     No Products Found
+
                                 </h2>
+
                                 <p className="text-[#0009] max-w-sm">
-                                    We couldn’t find any products matching your filter or search. Try clearing filters or explore another category.
+
+                                    We couldn’t find any products
+                                    matching your filter or search.
+                                    Try clearing filters or explore
+                                    another category.
+
                                 </p>
+
                             </div>
+
                         )}
 
-                        <div className="flex items-center justify-center gap-2">
-                            <Pagination
-                                total={total}
-                                pageSize={pageSize}
-                                current={current}
-                                showSizeChanger={false}
-                                itemRender={itemRender}
-                            />
-                        </div>
+
+                        {/* =================================================
+                            PAGINATION
+                        ================================================= */}
+
+                        {!isLoader &&
+                            products.length > 0 && (
+
+                                <div className="flex items-center justify-center gap-2 mt-10">
+
+                                    <Pagination
+                                        className="customer-pagination"
+                                        total={total}
+                                        pageSize={pageSize}
+                                        current={current}
+                                        showSizeChanger={false}
+                                        onChange={
+                                            handlePageChange
+                                        }
+                                        itemRender={
+                                            itemRender
+                                        }
+                                    />
+
+                                </div>
+
+                            )}
+
                     </div>
+
                 </div>
+
             </div>
+
+
+            {/* =================================================
+                MOBILE FILTER DRAWER
+            ================================================= */}
 
             <Drawer
                 title="Filter"
                 placement="left"
                 open={isDrawerOpen}
-                onClose={() => setIsDrawerOpen(false)}
+                onClose={() =>
+                    setIsDrawerOpen(false)
+                }
                 width={300}
-                bodyStyle={{ padding: "16px" }}
+                bodyStyle={{
+                    padding: "16px",
+                }}
             >
-                <SidebarFilters />
-            </Drawer>
-        </section >
-    )
-}
 
-export default ShopSection
+                <SidebarFilters
+                    onCategorySelect={(id) => {
+
+                        setCategoryId(id);
+
+                        setCurrent(1);
+
+                        setIsDrawerOpen(false);
+
+                    }}
+                />
+
+            </Drawer>
+
+        </section>
+    );
+};
+
+
+export default ShopSection;
