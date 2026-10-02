@@ -8,7 +8,7 @@ import {
 } from "react-icons/fi";
 
 import { Tooltip, message } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useWishlist } from "../../../../hooks";
@@ -54,6 +54,8 @@ const ProductCard = ({
         discount?.type || "none";
 
     let finalPrice = basePrice;
+
+    const navigate = useNavigate();
 
     if (discountType === "flat") {
         finalPrice = Math.max(
@@ -148,18 +150,18 @@ const ProductCard = ({
             },
             {
                 icon: <FiEye size={18} />,
-                label: "Quick View",
+                label: "View Details",
                 onClick: () => {
-                    // Quick view logic
+                    navigate(`/product-details/${product?._id}`);
                 },
             },
-            {
-                icon: <FiShuffle size={18} />,
-                label: "Add to Compare",
-                onClick: () => {
-                    // Compare logic
-                },
-            },
+            // {
+            //     icon: <FiShuffle size={18} />,
+            //     label: "Add to Compare",
+            //     onClick: () => {
+            //         // Compare logic
+            //     },
+            // },
         ];
 
     return (
