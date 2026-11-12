@@ -228,7 +228,7 @@ const AddProduct = () => {
                 <Input className="py-[6px] hover:!border-[#ff6f61]" />
               </Form.Item>
 
-              <Form.Item name="weightInGrams" label="Weight (g)" className="!mb-3" rules={[{ required: true }]}>
+              <Form.Item name="weightInGrams" label="Weight (g)" className="!mb-3">
                 <Input className="py-[6px] hover:!border-[#ff6f61]" />
               </Form.Item>
             </div>

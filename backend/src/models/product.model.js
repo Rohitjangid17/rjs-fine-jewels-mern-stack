@@ -25,7 +25,7 @@ const productSchema = new mongoose.Schema({
         enum: ["in stock", "out of stock", "preorder"],
         default: "in stock",
     },
-    weightInGrams: { type: Number, min: 0, required: true },
+    weightInGrams: { type: Number, min: 0},
     metalType: {
         type: String,
         enum: ["Gold", "Silver", "Platinum", "Rose Gold", "Other"],

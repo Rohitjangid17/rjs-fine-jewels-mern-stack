@@ -41,7 +41,7 @@ export const createProduct = async (req, res) => {
             dimensions
         } = parsedBody;
 
-        if (!title || !description || !basePrice || !sku || !category || !weightInGrams || !metalType || !dimensions) {
+        if (!title || !description || !basePrice || !sku || !category || !metalType || !dimensions) {
             req.files?.forEach(f => deleteUploadedFile(f.path));
             return res.status(400).json({ status: false, message: "Required fields are missing." });
         }
